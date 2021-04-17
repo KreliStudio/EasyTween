@@ -2,6 +2,7 @@
 {
     public enum EaseType
     {
+        None = -1,
         Linear = 0,
 
         InSine,
@@ -48,7 +49,7 @@
     public enum LoopType
     {
         None = 0,
-        Loop,
+        Repeat,
         PingPong,
     }
 }

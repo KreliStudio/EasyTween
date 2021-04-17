@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace EasyTween
 {
     public static class EaseInOut
     {
-        const int precision = 64;
-
         const float c1 = 1.70158f;
         const float c2 = 2.59491f;
         const float c3 = 2.70158f;
@@ -17,23 +12,7 @@ namespace EasyTween
         const float c6 = 7.5625f;
         const float c7 = 2.75f;
 
-        static Dictionary<EaseType, AnimationCurve> cachedCurves;
 
-
-        public static AnimationCurve GetCurve(EaseType easeType)
-        {
-            AnimationCurve easeCurve = null;
-
-            if (cachedCurves == null)
-                cachedCurves = new Dictionary<EaseType, AnimationCurve>(capacity: 32);
-            else if (cachedCurves.TryGetValue(easeType, out easeCurve))
-                return easeCurve;
-
-            easeCurve = CreateCurve(easeType);
-            cachedCurves.Add(easeType, easeCurve);
-            return easeCurve;
-        }
-                
         public static float Evaluate(EaseType easeType, float x)
         {
             switch (easeType)
@@ -72,28 +51,7 @@ namespace EasyTween
                 default: return x;
             }
         }
-
-
-        static AnimationCurve CreateCurve(EaseType easeType)
-        {
-            Keyframe[] keyframes = new Keyframe[precision];
-            float time;
-
-            for (int i = 0; i < precision; i++)
-            {
-                time = (float)i / precision;
-                keyframes[i] = new Keyframe(
-                    time: time,
-                    value: Evaluate(easeType, time));
-            }
-
-            AnimationCurve newCurve = new AnimationCurve(keyframes);
-            for (int i = 0; i < precision; i++)
-                newCurve.SmoothTangents(i, 0);
-
-            return newCurve;
-        }
-
+        
 
         static float CalculateInSine(float x)
         {
