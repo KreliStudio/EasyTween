@@ -2,17 +2,15 @@
 
 namespace EasyTween
 {
-    [System.Serializable]
-    public sealed class PositionTweenData : TweenData
+    public sealed class PositionTween : BaseTween
     {
         Transform target;
         Vector3 startValue;
         Vector3 endValue;
 
-        public PositionTweenData(Transform target, Vector3 value, Space space = Space.Self) : base()
+        public PositionTween(Transform target, Vector3 value, Space space = Space.Self) : base()
         {
             this.target = target;
-
             startValue = target.position;
             endValue = space == Space.World ? value : startValue + value;
         }

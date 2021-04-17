@@ -2,8 +2,7 @@
 
 namespace EasyTween
 {
-    [System.Serializable]
-    public abstract class TweenData
+    public abstract class BaseTween
     {
         protected EaseType easeType;
         protected AnimationCurve customEase;
@@ -25,7 +24,7 @@ namespace EasyTween
         int completedLoops;
 
 
-        protected TweenData()
+        protected BaseTween()
         {
             // set default values
             easeType = EaseType.Linear;
@@ -45,49 +44,61 @@ namespace EasyTween
         }
         
 
-        public TweenData Duration(float time)
+        public BaseTween Duration(float time)
         {
             duration = time;
             return this;
         }
 
-        public TweenData Ease(EaseType ease)
+        public BaseTween Ease(EaseType ease)
         {
             easeType = ease;
             customEase = null;
             return this;
         }
 
-        public TweenData CustomEase(AnimationCurve curve)
+        public BaseTween CustomEase(AnimationCurve curve)
         {
             easeType = EaseType.None;
             customEase = curve;
             return this;
         }
 
-        public TweenData Loop(LoopType loop, int amount = 0)
+        public BaseTween Loop(LoopType loop, int amount = 0)
         {
             loopType = loop;
             loopAmount = loop == LoopType.None ? 1 : amount;
             return this;
         }
         
-        public TweenData OnUpdate(System.Action<float> callback)
+        public BaseTween OnUpdate(System.Action<float> callback)
         {
             onUpdate = callback;
             return this;
         }
 
-        public TweenData OnCompleted(System.Action callback)
+        public BaseTween OnCompleted(System.Action callback)
         {
             onCompleted = callback;
             return this;
         }
 
-        public TweenData OnLoopStepCompleted(System.Action callback)
+        public BaseTween OnLoopStepCompleted(System.Action callback)
         {
             onLoopStepCompleted = callback;
             return this;
+        }
+
+        public override string ToString()
+        {
+            return "Tween (" + GetType().Name + ")\n"
+                + "Duration: " + duration + "s\n"
+                + "EaseType: " + (customEase != null ? "Custom Ease" : easeType.ToString()) + "\n"
+                + "Loop: " + loopType.ToString() + (loopType != LoopType.None ? " (Amount: " + (loopAmount < 1 ? "Infinite" : loopAmount.ToString()) + ")" : string.Empty) +"\n"
+                + "Callbacks: "
+                    + (onUpdate != null ? "OnUpdate " : string.Empty)
+                    + (onCompleted != null ? "OnCompleted " : string.Empty)
+                    + (onLoopStepCompleted != null ? "OnLoopStepCompleted " : string.Empty);
         }
 
 
@@ -172,17 +183,6 @@ namespace EasyTween
 
         internal abstract void Lerp(float ratio);
 
-        public override string ToString()
-        {
-            return "Tween (" + GetType().Name + ")\n"
-                + "Duration: " + duration + "s\n"
-                + "EaseType: " + (customEase != null ? "Custom Ease" : easeType.ToString()) + "\n"
-                + "Loop: " + loopType.ToString() + " (amount: " + (loopAmount == -1 ? "Infinite" : loopAmount.ToString()) + ")\n"
-                + "Callbacks: "
-                    + (onUpdate != null ? "OnUpdate " : string.Empty)
-                    + (onCompleted != null ? "OnCompleted " : string.Empty)
-                    + (onLoopStepCompleted != null ? "OnLoopStepCompleted " : string.Empty);
-        }
-
+        
     }
 }

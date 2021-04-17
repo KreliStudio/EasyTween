@@ -31,9 +31,9 @@ namespace EasyTween
 
 
 
-        List<TweenData> tweens = new List<TweenData>(capacity: 8);
+        List<BaseTween> tweens = new List<BaseTween>(capacity: 8);
 
-        List<TweenData> tweensToRemove = new List<TweenData>(capacity: 8);
+        List<BaseTween> tweensToRemove = new List<BaseTween>(capacity: 8);
 
         void Update()
         {
@@ -43,12 +43,12 @@ namespace EasyTween
                     tweens[i].Update(deltaTime);
         }
 
-        internal static void AddTween(TweenData tweenData)
+        internal static void AddTween(BaseTween tweenData)
         {
             Instance.tweens.Add(tweenData);
         }
 
-        internal static void RemoveTween(TweenData tweenData)
+        internal static void RemoveTween(BaseTween tweenData)
         {
             if (Instance.tweens.Contains(tweenData))
                 Instance.tweens.Remove(tweenData);
