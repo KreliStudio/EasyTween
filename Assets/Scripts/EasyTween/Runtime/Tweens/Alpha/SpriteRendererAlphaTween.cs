@@ -4,13 +4,20 @@ namespace EasyTween
 {
     public sealed class SpriteRendererAlphaTween : BaseTween
     {
-        SpriteRenderer target;
+        readonly SpriteRenderer target;
+        readonly float value;
+
         float startValue;
         float endValue;
 
         public SpriteRendererAlphaTween(SpriteRenderer target, float value) : base()
         {
             this.target = target;
+            this.value = value;
+        }
+
+        internal override void Initialize()
+        {
             startValue = target.color.a;
             endValue = value;
         }

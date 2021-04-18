@@ -4,14 +4,21 @@ namespace EasyTween
 {
     public sealed class MeshRendererAlphaTween : BaseTween
     {
-        Material target;
+        readonly Material target;
+        readonly float value;
+
         float startValue;
         float endValue;
 
         public MeshRendererAlphaTween(MeshRenderer target, float value) : base()
         {
             this.target = target.material;
-            startValue = this.target != null ? this.target.color.a : 1.0f;
+            this.value = value;
+        }
+
+        internal override void Initialize()
+        {
+            startValue = target != null ? target.color.a : 1.0f;
             endValue = value;
         }
 

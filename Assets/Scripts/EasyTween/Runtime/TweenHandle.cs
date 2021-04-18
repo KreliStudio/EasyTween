@@ -22,36 +22,38 @@ namespace EasyTween
                 return handle;
 
             GameObject gameObject = new GameObject("<Tween Handle>");
-            gameObject.hideFlags = HideFlags.NotEditable | HideFlags.HideAndDontSave;
+           // gameObject.hideFlags = HideFlags.NotEditable | HideFlags.HideAndDontSave;
             handle = gameObject.AddComponent<TweenHandle>();
             return handle;
         }
 
 
-
-
-
-        List<BaseTween> tweens = new List<BaseTween>(capacity: 8);
-
-        List<BaseTween> tweensToRemove = new List<BaseTween>(capacity: 8);
+        List<ITweenable> tweens = new List<ITweenable>(capacity: 8);
+        
 
         void Update()
         {
             float deltaTime = Time.deltaTime;
-            for (int i = tweens.Count -1; i >= 0; i--)
-                if (tweens[i] != null)
-                    tweens[i].Update(deltaTime);
+            for (int i = tweens.Count - 1; i >= 0; i--)
+            {
+                foreach (var currentTween in tweens[i].CurrentTweens)
+                {
+                    if (currentTween == null || currentTween.IsCompleted)
+                        RemoveTween(currentTween);
+                    else
+                        currentTween.Update(deltaTime);
+                }
+            }
         }
 
-        internal static void AddTween(BaseTween tweenData)
+        internal static void AddTween(ITweenable tweenData)
         {
             Instance.tweens.Add(tweenData);
         }
 
-        internal static void RemoveTween(BaseTween tweenData)
+        internal static void RemoveTween(ITweenable tweenData)
         {
-            if (Instance.tweens.Contains(tweenData))
-                Instance.tweens.Remove(tweenData);
+            Instance.tweens.Remove(tweenData);
         }
     }
 }

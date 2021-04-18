@@ -9,25 +9,36 @@ public class TestingScript : MonoBehaviour
 
     private void Start()
     {
-        /*EasyTween.Tween
-            .Position(transform, Vector3.up, Space.World)
-            .Duration(1.0f)
-            .Loop(LoopType.Repeat)
-            .Execute();*/
-        EasyTween.Tween
-            .Alpha(GetComponent<MeshRenderer>(), 0)
-            .Duration(1.0f)
+        var a = EasyTween.Tween
+            .Position(transform, Vector3.up, Space.Self)
+            .Duration(1.0f);
+
+        var b = EasyTween.Tween
+            .Rotation(transform, Vector3.left * 90, Space.Self)
+            .Duration(1.0f);
+
+        var c = EasyTween.Tween
+            .Color(GetComponent<MeshRenderer>(), Color.red)
+            .Duration(2.0f)
             .Ease(EaseType.Linear)
-            .OnUpdate(OnUpdateTween)
-            .Execute();
+            .Loop(LoopType.PingPong, 2)
+            .OnInitialize(() =>
+            {
+                startPos = transform.position;
+            })
+            .OnUpdate(OnUpdateTween);
 
-        
-
+        Tween.Sequence()
+            .Append(a,b)
+            .Append(c)
+            .Execute(1);
     }
+
+    Vector3 startPos;
     
     void OnUpdateTween(float time)
     {
-        //transform.localScale = Vector3.LerpUnclamped(Vector3.one, Vector3.one * 2, time);
-       // transform.localPosition = Vector3.LerpUnclamped(Vector3.zero, Vector3.up, time);
+        transform.localScale = Vector3.LerpUnclamped(Vector3.one, Vector3.one * 2, time);
+        transform.localPosition = Vector3.LerpUnclamped(startPos, startPos + Vector3.up * 2, time);
     }
 }

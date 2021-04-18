@@ -5,13 +5,20 @@ namespace EasyTween
 {
     public sealed class ImageAlphaTween : BaseTween
     {
-        Image target;
+        readonly Image target;
+        readonly float value;
+
         float startValue;
         float endValue;
 
         public ImageAlphaTween(Image target, float value) : base()
         {
             this.target = target;
+            this.value = value;
+        }
+
+        internal override void Initialize()
+        {
             startValue = target.color.a;
             endValue = value;
         }

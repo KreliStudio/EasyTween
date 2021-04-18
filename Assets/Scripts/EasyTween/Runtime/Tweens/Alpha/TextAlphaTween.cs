@@ -5,13 +5,19 @@ namespace EasyTween
 {
     public sealed class TextAlphaTween : BaseTween
     {
-        Text target;
+        readonly Text target;
+        readonly float value;
         float startValue;
         float endValue;
 
         public TextAlphaTween(Text target, float value) : base()
         {
             this.target = target;
+            this.value = value;
+        }
+
+        internal override void Initialize()
+        {
             startValue = target.color.a;
             endValue = value;
         }

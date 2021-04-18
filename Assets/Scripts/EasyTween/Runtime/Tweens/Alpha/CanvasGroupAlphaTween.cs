@@ -4,13 +4,20 @@ namespace EasyTween
 {
     public sealed class CanvasGroupAlphaTween : BaseTween
     {
-        CanvasGroup target;
+        readonly CanvasGroup target;
+        readonly float value;
+
         float startValue;
         float endValue;
 
         public CanvasGroupAlphaTween(CanvasGroup target, float value) : base()
         {
             this.target = target;
+            this.value = value;
+        }
+
+        internal override void Initialize()
+        {
             startValue = target.alpha;
             endValue = value;
         }

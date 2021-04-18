@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace EasyTween
 {
     public static class Tween
     {
-
         public static BaseTween Position(Transform target, Vector3 value, Space space = Space.Self)
         {
             return new PositionTween(target, value, space);
@@ -18,7 +14,6 @@ namespace EasyTween
         {
             return Rotation(target, Quaternion.Euler(value), space);
         }
-
         public static BaseTween Rotation(Transform target, Quaternion value, Space space = Space.Self)
         {
             return new RotationTween(target, value, space);
@@ -33,8 +28,11 @@ namespace EasyTween
         {
             return new EmptyTween();
         }
-
-
+        public static BaseTween Delay(float duration)
+        {
+            return Empty().Duration(duration);
+        }
+        
         public static BaseTween Color(Image target, Color value)
         {
             return new ImageColorTween(target, value);
@@ -51,8 +49,7 @@ namespace EasyTween
         {
             return new SpriteRendererColorTween(target, value);
         }
-
-
+        
         public static BaseTween Alpha(SpriteRenderer target, float value)
         {
             return new SpriteRendererAlphaTween(target, value);
@@ -73,16 +70,38 @@ namespace EasyTween
         {
             return new CanvasGroupAlphaTween(target, value);
         }
+        
 
-
-
+        public static Sequence Sequence()
+        {
+            return new Sequence();
+        }
 
         // Extensions
-        public static void Execute(this BaseTween tweenData, float delay = 0)
+        public static void Execute(this BaseTween tween, float delay = 0)
         {
-            TweenHandle.AddTween(tweenData);
+            if (delay > 0)
+            {
+                TweenHandle.AddTween(
+                   Sequence()
+                    .Append(Delay(delay))
+                    .Append(tween)
+                    );                
+            }
+            else
+            {
+                TweenHandle.AddTween(tween);
+            }
         }
-        
+
+        public static void Execute(this Sequence sequence, float delay = 0)
+        {
+            if (delay > 0)
+                sequence.Prepend(Delay(delay));            
+
+            TweenHandle.AddTween(sequence);
+        }
+
     }
 
     public enum EaseType

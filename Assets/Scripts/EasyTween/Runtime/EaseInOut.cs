@@ -2,7 +2,7 @@
 
 namespace EasyTween
 {
-    public static class EaseInOut
+    internal static class EaseInOut
     {
         const float c1 = 1.70158f;
         const float c2 = 2.59491f;
@@ -13,7 +13,7 @@ namespace EasyTween
         const float c7 = 2.75f;
 
 
-        public static float Evaluate(EaseType easeType, float x)
+        internal static float Evaluate(EaseType easeType, float x)
         {
             switch (easeType)
             {

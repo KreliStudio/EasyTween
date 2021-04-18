@@ -4,7 +4,10 @@ namespace EasyTween
 {
     public sealed class ScaleTween : BaseTween
     {
-        Transform target;
+        readonly Transform target;
+        readonly Vector3 value;
+        readonly Space space;
+
         Vector3 startValue;
         Vector3 endValue;
         
@@ -12,15 +15,20 @@ namespace EasyTween
         public ScaleTween(Transform target, Vector3 value, Space space = Space.Self) : base()
         {
             this.target = target;
-            startValue = target.localScale;
+            this.value = value;
+            this.space = space;
+        }
 
+        internal override void Initialize()
+        {
+            startValue = target.localScale;
             if (space == Space.World)
             {
                 Vector3 worldScale = target.lossyScale;
                 Vector3 localScale = target.localScale;
 
                 endValue = new Vector3(
-                    x: value.x * (localScale.x / Mathf.Max(worldScale.x,float.Epsilon)),
+                    x: value.x * (localScale.x / Mathf.Max(worldScale.x, float.Epsilon)),
                     y: value.y * (localScale.y / Mathf.Max(worldScale.y, float.Epsilon)),
                     z: value.z * (localScale.z / Mathf.Max(worldScale.z, float.Epsilon))
                     );
@@ -29,7 +37,6 @@ namespace EasyTween
             {
                 endValue = value;
             }
-
         }
 
         internal override void Lerp(float ratio)

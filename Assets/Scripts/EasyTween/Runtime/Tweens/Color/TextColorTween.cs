@@ -5,13 +5,20 @@ namespace EasyTween
 {
     public sealed class TextColorTween : BaseTween
     {
-        Text target;
+        readonly Text target;
+        readonly Color value;
+
         Color startValue;
         Color endValue;
 
         public TextColorTween(Text target, Color value) : base()
         {
             this.target = target;
+            this.value = value;
+        }
+
+        internal override void Initialize()
+        {
             startValue = target.color;
             endValue = value;
         }

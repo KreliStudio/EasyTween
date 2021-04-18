@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace EasyTween
 {
-    public abstract class BaseTween
+    public abstract class BaseTween : ITweenable
     {
         protected EaseType easeType;
         protected AnimationCurve customEase;
@@ -10,9 +11,10 @@ namespace EasyTween
         protected LoopType loopType;
         protected int loopAmount;
 
-        protected System.Action onCompleted;
+        protected System.Action onInitialize;
         protected System.Action<float> onUpdate;
-        protected System.Action onLoopStepCompleted;
+        protected System.Action onCompleted;
+        protected System.Action onStepCompleted;
 
 
         protected float duration;
@@ -23,6 +25,16 @@ namespace EasyTween
         float easeRatio;
         int completedLoops;
 
+        public bool IsCompleted { get; private set; }
+        public bool IsInitialized { get; private set; }
+        
+        public IEnumerable<BaseTween> CurrentTweens
+        {
+            get
+            {
+                yield return this;
+            }
+        }
 
         protected BaseTween()
         {
@@ -33,7 +45,9 @@ namespace EasyTween
             loopAmount = 1;
             onUpdate = null;
             onCompleted = null;
-            onLoopStepCompleted = null;
+            onStepCompleted = null;
+            IsCompleted = false;
+            IsInitialized = false;
 
             duration = 1.0f;
 
@@ -70,22 +84,28 @@ namespace EasyTween
             loopAmount = loop == LoopType.None ? 1 : amount;
             return this;
         }
-        
+
+        public BaseTween OnInitialize(System.Action callback)
+        {
+            onInitialize = callback;
+            return this;
+        }
+
         public BaseTween OnUpdate(System.Action<float> callback)
         {
             onUpdate = callback;
             return this;
         }
-
+                
         public BaseTween OnCompleted(System.Action callback)
         {
             onCompleted = callback;
             return this;
         }
 
-        public BaseTween OnLoopStepCompleted(System.Action callback)
+        public BaseTween OnStepCompleted(System.Action callback)
         {
-            onLoopStepCompleted = callback;
+            onStepCompleted = callback;
             return this;
         }
 
@@ -98,13 +118,25 @@ namespace EasyTween
                 + "Callbacks: "
                     + (onUpdate != null ? "OnUpdate " : string.Empty)
                     + (onCompleted != null ? "OnCompleted " : string.Empty)
-                    + (onLoopStepCompleted != null ? "OnLoopStepCompleted " : string.Empty);
+                    + (onStepCompleted != null ? "OnLoopStepCompleted " : string.Empty);
         }
 
 
 
         internal void Update(float deltaTime)
         {
+            if (IsCompleted)
+                return;
+
+            // setup start values for tween etc
+            if (!IsInitialized)
+            {
+                Initialize();
+                if (onInitialize != null)
+                    onInitialize();
+                IsInitialized = true;
+            }
+
             // calculate loop ratio and completed loops
             int newCompletedLoops;
             GetLoopedRatio(ratio, out loopedRatio, out newCompletedLoops);
@@ -123,8 +155,8 @@ namespace EasyTween
             if (completedLoops < newCompletedLoops)
             {
                 completedLoops = newCompletedLoops;
-                if (onLoopStepCompleted != null)
-                    onLoopStepCompleted();
+                if (onStepCompleted != null)
+                    onStepCompleted();
             }
 
             // Complete tween if loop amount is achieved
@@ -141,10 +173,10 @@ namespace EasyTween
 
         void Complete()
         {
+            IsCompleted = true;
+
             if (onCompleted != null)
                 onCompleted();
-
-            TweenHandle.RemoveTween(this);
         }
 
         void GetLoopedRatio(float ratio, out float loopedRatio, out int completedLoops)
@@ -179,10 +211,8 @@ namespace EasyTween
                 return EaseInOut.Evaluate(easeType, ratio);
         }
 
-
-
-        internal abstract void Lerp(float ratio);
-
         
+        internal abstract void Initialize();        
+        internal abstract void Lerp(float ratio);        
     }
 }
