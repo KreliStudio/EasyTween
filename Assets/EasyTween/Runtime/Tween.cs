@@ -41,6 +41,10 @@ namespace EasyTween
         {
             return new TextColorTween(target, value);
         }
+        public static BaseTween Color(TMPro.TMP_Text target, Color value)
+        {
+            return new TextMeshProColorTween(target, value);
+        }
         public static BaseTween Color(MeshRenderer target, Color value)
         {
             return new MeshRendererColorTween(target, value);
@@ -61,6 +65,10 @@ namespace EasyTween
         public static BaseTween Alpha(Text target, float value)
         {
             return new TextAlphaTween(target, value);
+        }
+        public static BaseTween Alpha(TMPro.TMP_Text target, float value)
+        {
+            return new TextMeshProAlphaTween(target, value);
         }
         public static BaseTween Alpha(Image target, float value)
         {

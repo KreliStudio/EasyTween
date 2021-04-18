@@ -7,6 +7,7 @@ namespace EasyTween
     {
         readonly Text target;
         readonly float value;
+
         float startValue;
         float endValue;
 

@@ -22,7 +22,7 @@ namespace EasyTween
                 return handle;
 
             GameObject gameObject = new GameObject("<Tween Handle>");
-           // gameObject.hideFlags = HideFlags.NotEditable | HideFlags.HideAndDontSave;
+            gameObject.hideFlags = HideFlags.NotEditable | HideFlags.HideAndDontSave;
             handle = gameObject.AddComponent<TweenHandle>();
             return handle;
         }
