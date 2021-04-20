@@ -18,6 +18,7 @@ namespace EasyTween
 
 
         protected float duration;
+        protected float speed;
         protected float elapsedTime;
 
         float ratio;
@@ -27,6 +28,8 @@ namespace EasyTween
 
         public bool IsCompleted { get; private set; }
         public bool IsInitialized { get; private set; }
+
+        internal TimerType TimerType { get; private set; }
         
         public IEnumerable<BaseTween> CurrentTweens
         {
@@ -50,6 +53,7 @@ namespace EasyTween
             IsInitialized = false;
 
             duration = 1.0f;
+            speed = 0.0f;
 
             elapsedTime = 0.0f;
             loopedRatio = 0.0f;
@@ -61,6 +65,12 @@ namespace EasyTween
         public BaseTween Duration(float time)
         {
             duration = time;
+            return this;
+        }
+
+        public BaseTween DurationFromSpeed(float speed)
+        {
+            this.speed = speed;
             return this;
         }
 
@@ -85,6 +95,12 @@ namespace EasyTween
             return this;
         }
 
+        public BaseTween Timer(TimerType type)
+        {
+            TimerType = type;
+            return this;
+        }
+        
         public BaseTween OnInitialize(System.Action callback)
         {
             onInitialize = callback;
@@ -108,6 +124,8 @@ namespace EasyTween
             onStepCompleted = callback;
             return this;
         }
+
+
 
         public override string ToString()
         {
@@ -135,6 +153,10 @@ namespace EasyTween
                 if (onInitialize != null)
                     onInitialize();
                 IsInitialized = true;
+
+                // calculate duration from speed after initialize base tween parameters
+                if (speed > 0.0f)
+                    duration = CalculateDurationFromSpeed();
             }
 
             // calculate loop ratio and completed loops
@@ -212,7 +234,8 @@ namespace EasyTween
         }
 
         
-        internal abstract void Initialize();        
+        internal abstract void Initialize();
+        internal abstract float CalculateDurationFromSpeed();
         internal abstract void Lerp(float ratio);        
     }
 }

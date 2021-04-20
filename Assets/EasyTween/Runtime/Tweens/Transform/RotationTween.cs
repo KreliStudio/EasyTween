@@ -28,5 +28,10 @@ namespace EasyTween
         {
             target.rotation = Quaternion.LerpUnclamped(startValue, endValue, ratio);
         }
+
+        internal override float CalculateDurationFromSpeed()
+        {
+            return Quaternion.Angle(endValue, startValue) / speed;
+        }
     }
 }

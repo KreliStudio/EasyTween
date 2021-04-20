@@ -33,7 +33,6 @@ namespace EasyTween
 
         void Update()
         {
-            float deltaTime = Time.deltaTime;
             for (int i = tweens.Count - 1; i >= 0; i--)
             {
                 foreach (var currentTween in tweens[i].CurrentTweens)
@@ -41,7 +40,7 @@ namespace EasyTween
                     if (currentTween == null || currentTween.IsCompleted)
                         RemoveTween(currentTween);
                     else
-                        currentTween.Update(deltaTime);
+                        currentTween.Update(GetDeltaTime(currentTween.TimerType));
                 }
             }
         }
@@ -55,5 +54,20 @@ namespace EasyTween
         {
             Instance.tweens.Remove(tweenData);
         }
+
+        float GetDeltaTime(TimerType timerType)
+        {
+            switch (timerType)
+            {
+                case TimerType.UnscaledDeltaTime: return Time.unscaledDeltaTime;
+                case TimerType.FixedDeltaTime: return Time.fixedDeltaTime;
+                case TimerType.FixedUnscaledDeltaTime: return Time.fixedUnscaledDeltaTime;
+                case TimerType.SmoothDeltaTime: return Time.smoothDeltaTime;
+                case TimerType.DeltaTime:
+                default: return Time.deltaTime;
+            }
+        }
+
+
     }
 }

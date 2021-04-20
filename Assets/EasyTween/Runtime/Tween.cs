@@ -109,7 +109,6 @@ namespace EasyTween
 
             TweenHandle.AddTween(sequence);
         }
-
     }
 
     public enum EaseType
@@ -163,5 +162,20 @@ namespace EasyTween
         None = 0,
         Repeat,
         PingPong,
+    }
+
+    public enum TimerType
+    {
+        DeltaTime = 0,
+        UnscaledDeltaTime,
+        FixedDeltaTime,
+        FixedUnscaledDeltaTime,
+        SmoothDeltaTime,
+    }
+
+    public enum Duration
+    {
+        Time,
+        Speed,
     }
 }

@@ -19,6 +19,7 @@ namespace EasyTween
             this.space = space;
         }
 
+
         internal override void Initialize()
         {
             startValue = target.localScale;
@@ -42,6 +43,11 @@ namespace EasyTween
         internal override void Lerp(float ratio)
         {
             target.localScale = Vector3.LerpUnclamped(startValue, endValue, ratio);
+        }
+
+        internal override float CalculateDurationFromSpeed()
+        {
+            return Vector3.Distance(endValue, startValue) / speed;
         }
     }
 }

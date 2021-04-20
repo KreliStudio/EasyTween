@@ -29,5 +29,10 @@ namespace EasyTween
 
             target.color = Color.LerpUnclamped(startValue, endValue, ratio);
         }
+
+        internal override float CalculateDurationFromSpeed()
+        {
+            return Vector4.Distance(endValue, startValue) / speed;
+        }
     }
 }

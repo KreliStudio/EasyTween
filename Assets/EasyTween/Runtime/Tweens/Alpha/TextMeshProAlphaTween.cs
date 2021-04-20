@@ -29,5 +29,10 @@ namespace EasyTween
             newColor.a = Mathf.LerpUnclamped(startValue, endValue, ratio);
             target.color = newColor;
         }
+
+        internal override float CalculateDurationFromSpeed()
+        {
+            return Mathf.Abs(endValue - startValue) / speed;
+        }
     }
 }

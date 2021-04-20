@@ -28,5 +28,10 @@ namespace EasyTween
         {
             target.position = Vector3.LerpUnclamped(startValue, endValue, ratio);
         }
+
+        internal override float CalculateDurationFromSpeed()
+        {
+            return Vector3.Distance(endValue, startValue) / speed;
+        }
     }
 }

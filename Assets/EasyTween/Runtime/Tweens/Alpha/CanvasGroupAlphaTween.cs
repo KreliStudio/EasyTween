@@ -26,5 +26,10 @@ namespace EasyTween
         {
             target.alpha = Mathf.LerpUnclamped(startValue, endValue, ratio);
         }
+
+        internal override float CalculateDurationFromSpeed()
+        {
+            return Mathf.Abs(endValue - startValue) / speed;
+        }
     }
 }
