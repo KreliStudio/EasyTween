@@ -31,7 +31,7 @@ namespace EasyTween
 
         internal override float CalculateDurationFromSpeed()
         {
-            return Quaternion.Angle(endValue, startValue) / speed;
+            return Quaternion.Angle(endValue, startValue) / Speed;
         }
     }
 }

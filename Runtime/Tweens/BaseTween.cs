@@ -5,32 +5,32 @@ namespace EasyTween
 {
     public abstract class BaseTween : ITweenable
     {
-        protected EaseType easeType;
-        protected AnimationCurve customEase;
-
-        protected LoopType loopType;
-        protected int loopAmount;
-
         protected System.Action onInitialize;
         protected System.Action<float> onUpdate;
         protected System.Action onCompleted;
         protected System.Action onStepCompleted;
 
+        public EaseType EaseType { get; protected set; }
+        public AnimationCurve CustomEase { get; protected set; }
 
-        protected float duration;
-        protected float speed;
-        protected float elapsedTime;
+        public LoopType LoopType { get; protected set; }
+        public int LoopAmount { get; protected set; }
 
-        float ratio;
-        float loopedRatio;
-        float easeRatio;
-        int completedLoops;
+        public float Duration { get; protected set; }
+        public float Speed { get; protected set; }
+        public float ElapsedTime { get; protected set; }
+
+        public float Ratio { get; private set; }
+        public float LoopedRatio { get; private set; }
+        public float FinalRatio { get; private set; }
+        public int CompletedLoops { get; private set; }
 
         public bool IsCompleted { get; private set; }
         public bool IsInitialized { get; private set; }
 
-        internal TimerType TimerType { get; private set; }
+        public DeltaTimeType DeltaTimeType { get; private set; }
         
+        /// <summary>Return this tween as enumerable.</summary>
         public IEnumerable<BaseTween> CurrentTweens
         {
             get
@@ -42,83 +42,92 @@ namespace EasyTween
         protected BaseTween()
         {
             // set default values
-            easeType = EaseType.Linear;
-            customEase = null;
-            loopType = LoopType.None;
-            loopAmount = 1;
+            EaseType = EaseType.Linear;
+            CustomEase = null;
+            LoopType = LoopType.None;
+            LoopAmount = 1;
             onUpdate = null;
             onCompleted = null;
             onStepCompleted = null;
             IsCompleted = false;
             IsInitialized = false;
 
-            duration = 1.0f;
-            speed = 0.0f;
+            Duration = 1.0f;
+            Speed = 0.0f;
 
-            elapsedTime = 0.0f;
-            loopedRatio = 0.0f;
-            easeRatio = 0.0f;
-            completedLoops = 0;
+            ElapsedTime = 0.0f;
+            LoopedRatio = 0.0f;
+            FinalRatio = 0.0f;
+            CompletedLoops = 0;
         }
         
-
-        public BaseTween Duration(float time)
+        /// <summary>Set how long will this tween play.</summary>
+        public BaseTween SetDuration(float time)
         {
-            duration = time;
+            Duration = time;
             return this;
         }
 
-        public BaseTween DurationFromSpeed(float speed)
+        /// <summary>Set speed and it will calculate tween duration.</summary>
+        public BaseTween SetDurationFromSpeed(float speed)
         {
-            this.speed = speed;
-            return this;
-        }
-
-        public BaseTween Ease(EaseType ease)
-        {
-            easeType = ease;
-            customEase = null;
-            return this;
-        }
-
-        public BaseTween CustomEase(AnimationCurve curve)
-        {
-            easeType = EaseType.None;
-            customEase = curve;
-            return this;
-        }
-
-        public BaseTween Loop(LoopType loop, int amount = 0)
-        {
-            loopType = loop;
-            loopAmount = loop == LoopType.None ? 1 : amount;
-            return this;
-        }
-
-        public BaseTween Timer(TimerType type)
-        {
-            TimerType = type;
+            this.Speed = speed;
             return this;
         }
         
+        /// <summary>Set ease from buldin types.</summary>
+        public BaseTween SetEase(EaseType ease)
+        {
+            EaseType = ease;
+            CustomEase = null;
+            return this;
+        }
+
+        /// <summary>Set Your own ease using Animation Curve.</summary>
+        public BaseTween SetCustomEase(AnimationCurve curve)
+        {
+            EaseType = EaseType.None;
+            CustomEase = curve;
+            return this;
+        }
+
+        /// <summary>Set loop type. Loop type set to none will disable loop. Amount less or equal 0 will make loop infinite.</summary>
+        public BaseTween SetLoop(LoopType loop, int amount = 0)
+        {
+            LoopType = loop;
+            LoopAmount = loop == LoopType.None ? 1 : amount;
+            return this;
+        }
+
+        /// <summary>Set which delta time will be used for this tween.</summary>
+        public BaseTween SetDeltaTime(DeltaTimeType type)
+        {
+            DeltaTimeType = type;
+            return this;
+        }
+        
+        /// <summary>Set callback which will be invoke on initialized tween. Initialization is in first frame of playing tween.</summary>
         public BaseTween OnInitialize(System.Action callback)
         {
             onInitialize = callback;
             return this;
         }
 
+        /// <summary>Set callback which will be invoke on update tween. It is invoke every frame in playing tween. Float parameter in callback is final calculated ratio (contains loop and ease modifiers).</summary>
         public BaseTween OnUpdate(System.Action<float> callback)
         {
             onUpdate = callback;
             return this;
         }
-                
+
+        /// <summary>Set callback which will be invoke on end tween.</summary>
         public BaseTween OnCompleted(System.Action callback)
         {
             onCompleted = callback;
             return this;
         }
 
+        /// <summary>Set callback which will be invoke on end loop step.</summary>
         public BaseTween OnStepCompleted(System.Action callback)
         {
             onStepCompleted = callback;
@@ -129,14 +138,12 @@ namespace EasyTween
 
         public override string ToString()
         {
-            return "Tween (" + GetType().Name + ")\n"
-                + "Duration: " + duration + "s\n"
-                + "EaseType: " + (customEase != null ? "Custom Ease" : easeType.ToString()) + "\n"
-                + "Loop: " + loopType.ToString() + (loopType != LoopType.None ? " (Amount: " + (loopAmount < 1 ? "Infinite" : loopAmount.ToString()) + ")" : string.Empty) +"\n"
-                + "Callbacks: "
-                    + (onUpdate != null ? "OnUpdate " : string.Empty)
-                    + (onCompleted != null ? "OnCompleted " : string.Empty)
-                    + (onStepCompleted != null ? "OnLoopStepCompleted " : string.Empty);
+            return $"Tween ({GetType().Name})\n"
+                + (Speed > 0 ? $"Speed: {Speed}\n" : $"Duration: {Duration}\n")
+                + $"Delta Time: {DeltaTimeType}\n"
+                + $"Ease Type: {(CustomEase != null ? "Custom Ease" : EaseType.ToString())}\n"
+                + $"Loop: {LoopType.ToString()} {(LoopType != LoopType.None ? "(Amount: " + (LoopAmount < 1 ? "Infinite" : LoopAmount.ToString()) + ")" : string.Empty)}\n"
+                + $"Callbacks: {(onInitialize != null ? "OnInitialize " : string.Empty)} {(onUpdate != null ? "OnUpdate " : string.Empty)} {(onCompleted != null ? "OnCompleted " : string.Empty)} {(onStepCompleted != null ? "OnLoopStepCompleted " : string.Empty)}";  
         }
 
 
@@ -150,87 +157,81 @@ namespace EasyTween
             if (!IsInitialized)
             {
                 Initialize();
-                if (onInitialize != null)
-                    onInitialize();
+                onInitialize?.Invoke();
                 IsInitialized = true;
 
                 // calculate duration from speed after initialize base tween parameters
-                if (speed > 0.0f)
-                    duration = CalculateDurationFromSpeed();
+                if (Speed > 0.0f)
+                    Duration = CalculateDurationFromSpeed();
             }
 
             // calculate loop ratio and completed loops
-            int newCompletedLoops;
-            GetLoopedRatio(ratio, out loopedRatio, out newCompletedLoops);
-            
+            GetLoopedRatio(out var newCompletedLoops);
+
             // calculate ease ratio
-            easeRatio = GetEaseRatio(loopedRatio);
+            FinalRatio = GetEaseRatio(LoopedRatio);
 
             // Lerp tween
-            Lerp(easeRatio);
+            Lerp(FinalRatio);
 
             // update callback
-            if (onUpdate != null)
-                onUpdate(easeRatio);
-            
+            onUpdate?.Invoke(FinalRatio);
+
             // Completed loop callback
-            if (completedLoops < newCompletedLoops)
+            if (CompletedLoops < newCompletedLoops)
             {
-                completedLoops = newCompletedLoops;
-                if (onStepCompleted != null)
-                    onStepCompleted();
+                CompletedLoops = newCompletedLoops;
+                onStepCompleted?.Invoke();
             }
 
             // Complete tween if loop amount is achieved
-            if (loopAmount > 0 && completedLoops >= loopAmount)
+            if (LoopAmount > 0 && CompletedLoops >= LoopAmount)
             {
                 Complete();
                 return;
             }
             
             // calculate elapsed time & base ratio
-            elapsedTime += deltaTime;
-            ratio = elapsedTime / duration;
+            ElapsedTime += deltaTime;
+            Ratio = ElapsedTime / Duration;
         }
 
         void Complete()
         {
             IsCompleted = true;
-
-            if (onCompleted != null)
-                onCompleted();
+            onCompleted?.Invoke();
         }
 
-        void GetLoopedRatio(float ratio, out float loopedRatio, out int completedLoops)
+        void GetLoopedRatio(out int completedLoops)
         {
-            completedLoops = Mathf.FloorToInt(ratio);
-            switch (loopType)
+            completedLoops = Mathf.FloorToInt(Ratio);
+            switch (LoopType)
             {
                 case LoopType.Repeat:
-                    loopedRatio = ratio % 1.0f;
+                    LoopedRatio = Ratio % 1.0f;
 
-                    if (this.completedLoops != completedLoops)
-                        loopedRatio = Mathf.CeilToInt(loopedRatio);
+                    if (this.CompletedLoops != completedLoops)
+                        LoopedRatio = Mathf.CeilToInt(LoopedRatio);
                     break;
                 case LoopType.PingPong:
-                    loopedRatio = (completedLoops % 2 == 1) ? 1.0f - ratio % 1.0f : ratio % 1.0f;
+                    LoopedRatio = (completedLoops % 2 == 1) ? 1.0f - Ratio % 1.0f : Ratio % 1.0f;
 
-                    if (this.completedLoops != completedLoops)
-                        loopedRatio = Mathf.RoundToInt(loopedRatio);
+                    if (this.CompletedLoops != completedLoops)
+                        LoopedRatio = Mathf.RoundToInt(LoopedRatio);
                     break;
                 case LoopType.None:
                 default:
-                    loopedRatio = Mathf.Clamp01(ratio);
+                    LoopedRatio = Mathf.Clamp01(Ratio);
                     break;
             }
         }
 
         float GetEaseRatio(float ratio)
         {
-            if (customEase != null)
-                return customEase.Evaluate(ratio);
+            if (CustomEase != null)
+                return CustomEase.Evaluate(ratio);
             else
-                return EaseInOut.Evaluate(easeType, ratio);
+                return EaseInOut.Evaluate(EaseType, ratio);
         }
 
         

@@ -32,7 +32,7 @@ namespace EasyTween
 
         internal override float CalculateDurationFromSpeed()
         {
-            return Mathf.Abs(endValue - startValue) / speed;
+            return Mathf.Abs(endValue - startValue) / Speed;
         }
     }
 }

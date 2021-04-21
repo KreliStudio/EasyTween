@@ -2,6 +2,10 @@
 
 namespace EasyTween
 {
+    /// <summary>
+    /// Helper class for calculate ease in/out in runtime. It is cheaper and more precise than uses of Animation Curves.
+    /// All calculations is taked from https://easings.net/
+    /// </summary>
     internal static class EaseInOut
     {
         const float c1 = 1.70158f;
