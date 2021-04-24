@@ -10,7 +10,9 @@ namespace EasyTween
 
         Quaternion startValue;
         Quaternion endValue;
-        
+
+        internal override bool IsValid => target != null;
+
         public RotationTween(Transform target, Quaternion value, Space space = Space.Self) : base()
         {
             this.target = target;
@@ -29,9 +31,9 @@ namespace EasyTween
             target.rotation = Quaternion.LerpUnclamped(startValue, endValue, ratio);
         }
 
-        internal override float CalculateDurationFromSpeed()
+        internal override float CalculateDurationFromSpeed(float speed)
         {
-            return Quaternion.Angle(endValue, startValue) / Speed;
+            return Quaternion.Angle(endValue, startValue) / speed;
         }
     }
 }

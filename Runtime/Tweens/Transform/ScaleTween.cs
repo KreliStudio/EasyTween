@@ -10,7 +10,8 @@ namespace EasyTween
 
         Vector3 startValue;
         Vector3 endValue;
-        
+
+        internal override bool IsValid => target != null;
 
         public ScaleTween(Transform target, Vector3 value, Space space = Space.Self) : base()
         {
@@ -18,7 +19,6 @@ namespace EasyTween
             this.value = value;
             this.space = space;
         }
-
 
         internal override void Initialize()
         {
@@ -45,9 +45,9 @@ namespace EasyTween
             target.localScale = Vector3.LerpUnclamped(startValue, endValue, ratio);
         }
 
-        internal override float CalculateDurationFromSpeed()
+        internal override float CalculateDurationFromSpeed(float speed)
         {
-            return Vector3.Distance(endValue, startValue) / Speed;
+            return Vector3.Distance(endValue, startValue) / speed;
         }
     }
 }

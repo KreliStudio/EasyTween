@@ -11,6 +11,8 @@ namespace EasyTween
         Vector3 startValue;
         Vector3 endValue;
 
+        internal override bool IsValid => target != null;
+
         public PositionTween(Transform target, Vector3 value, Space space = Space.Self) : base()
         {
             this.target = target;
@@ -29,9 +31,9 @@ namespace EasyTween
             target.position = Vector3.LerpUnclamped(startValue, endValue, ratio);
         }
 
-        internal override float CalculateDurationFromSpeed()
+        internal override float CalculateDurationFromSpeed(float speed)
         {
-            return Vector3.Distance(endValue, startValue) / Speed;
+            return Vector3.Distance(endValue, startValue) / speed;
         }
     }
 }

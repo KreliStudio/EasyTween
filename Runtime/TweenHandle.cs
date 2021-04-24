@@ -34,7 +34,7 @@ namespace EasyTween
         {
             for (int i = tweens.Count - 1; i >= 0; i--)
                 foreach (var currentTween in tweens[i].CurrentTweens)
-                    if (currentTween == null || currentTween.IsCompleted)
+                    if (currentTween == null || !currentTween.IsValid || currentTween.IsCompleted)
                         RemoveTween(currentTween);
                     else
                         currentTween.Update(GetDeltaTime(currentTween.DeltaTimeType));

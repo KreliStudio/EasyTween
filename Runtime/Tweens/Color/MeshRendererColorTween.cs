@@ -10,6 +10,8 @@ namespace EasyTween
         Color startValue;
         Color endValue;
 
+        internal override bool IsValid => target != null;
+
         public MeshRendererColorTween(MeshRenderer target, Color value) : base()
         {
             this.target = target.material;
@@ -30,9 +32,9 @@ namespace EasyTween
             target.color = Color.LerpUnclamped(startValue, endValue, ratio);
         }
 
-        internal override float CalculateDurationFromSpeed()
+        internal override float CalculateDurationFromSpeed(float speed)
         {
-            return Vector4.Distance(endValue, startValue) / Speed;
+            return Vector4.Distance(endValue, startValue) / speed;
         }
     }
 }

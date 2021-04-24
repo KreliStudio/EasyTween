@@ -10,24 +10,22 @@ namespace EasyTween
         protected System.Action onCompleted;
         protected System.Action onStepCompleted;
 
+        // protected set
         public EaseType EaseType { get; protected set; }
         public AnimationCurve CustomEase { get; protected set; }
-
         public LoopType LoopType { get; protected set; }
         public int LoopAmount { get; protected set; }
-
         public float Duration { get; protected set; }
-        public float Speed { get; protected set; }
         public float ElapsedTime { get; protected set; }
 
+        // private set
+        public float Speed { get; private set; }
         public float Ratio { get; private set; }
         public float LoopedRatio { get; private set; }
         public float FinalRatio { get; private set; }
         public int CompletedLoops { get; private set; }
-
         public bool IsCompleted { get; private set; }
         public bool IsInitialized { get; private set; }
-
         public DeltaTimeType DeltaTimeType { get; private set; }
         
         /// <summary>Return this tween as enumerable.</summary>
@@ -150,9 +148,12 @@ namespace EasyTween
 
         internal void Update(float deltaTime)
         {
-            if (IsCompleted)
+            if (!IsValid)
                 return;
 
+            if (IsCompleted)
+                return;
+            
             // setup start values for tween etc
             if (!IsInitialized)
             {
@@ -162,7 +163,7 @@ namespace EasyTween
 
                 // calculate duration from speed after initialize base tween parameters
                 if (Speed > 0.0f)
-                    Duration = CalculateDurationFromSpeed();
+                    Duration = CalculateDurationFromSpeed(Speed);
             }
 
             // calculate loop ratio and completed loops
@@ -234,9 +235,11 @@ namespace EasyTween
                 return EaseInOut.Evaluate(EaseType, ratio);
         }
 
-        
+
+        internal abstract bool IsValid { get; }
+
         internal abstract void Initialize();
-        internal abstract float CalculateDurationFromSpeed();
-        internal abstract void Lerp(float ratio);        
+        internal abstract float CalculateDurationFromSpeed(float speed);
+        internal abstract void Lerp(float ratio);
     }
 }

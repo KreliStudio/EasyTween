@@ -10,6 +10,8 @@ namespace EasyTween
         float startValue;
         float endValue;
 
+        internal override bool IsValid => target != null;
+
         public CanvasGroupAlphaTween(CanvasGroup target, float value) : base()
         {
             this.target = target;
@@ -27,9 +29,9 @@ namespace EasyTween
             target.alpha = Mathf.LerpUnclamped(startValue, endValue, ratio);
         }
 
-        internal override float CalculateDurationFromSpeed()
+        internal override float CalculateDurationFromSpeed(float speed)
         {
-            return Mathf.Abs(endValue - startValue) / Speed;
+            return Mathf.Abs(endValue - startValue) / speed;
         }
     }
 }

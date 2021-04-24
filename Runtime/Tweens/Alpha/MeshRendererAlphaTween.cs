@@ -10,6 +10,8 @@ namespace EasyTween
         float startValue;
         float endValue;
 
+        internal override bool IsValid => target != null;
+
         public MeshRendererAlphaTween(MeshRenderer target, float value) : base()
         {
             this.target = target.material;
@@ -32,9 +34,9 @@ namespace EasyTween
             target.color = newColor;
         }
 
-        internal override float CalculateDurationFromSpeed()
+        internal override float CalculateDurationFromSpeed(float speed)
         {
-            return Mathf.Abs(endValue - startValue) / Speed;
+            return Mathf.Abs(endValue - startValue) / speed;
         }
     }
 }
