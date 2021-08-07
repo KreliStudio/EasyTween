@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#define KRELI_STUDIO_EASY_TWEEN
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace EasyTween
