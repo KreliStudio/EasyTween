@@ -1,10 +1,9 @@
 {
   "name": "com.krelistudio.easytween",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "Easy Tween",
   "description": "This is an simple tween system.",
   "unity": "2018.1",
-  "dependencies": { },
   "keywords": [
     "tween",
     "animation",
@@ -15,5 +14,6 @@
     "email": "kamil.kreli@gmail.com",
     "url": "https://assetstore.unity.com/publishers/31269"
   },
-  "hideInEditor": false
+  "hideInEditor": false,
+  "type": "library"
 }
